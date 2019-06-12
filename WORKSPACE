@@ -160,6 +160,7 @@ haskell_register_ghc_bindists(
 register_toolchains(
     "//tests:c2hs-toolchain",
     "//tests:doctest-toolchain",
+    "//tests:hlint-toolchain",
     "//tests:protobuf-toolchain",
 )
 
@@ -196,6 +197,12 @@ nixpkgs_package(
 nixpkgs_package(
     name = "doctest",
     attribute_path = "haskellPackages.doctest",
+    repository = "@nixpkgs",
+)
+
+nixpkgs_package(
+    name = "hlint",
+    attribute_path = "hlint",
     repository = "@nixpkgs",
 )
 
