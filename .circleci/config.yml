@@ -42,11 +42,21 @@ jobs:
       - run:
           name: Run tests
           command: |
+            bazel build --config ci //tests:run-tests
+            # TODO(Profpatsch) re-add a nixpkgs startup script
+            # and enable this test again
+            ./bazel-ci-bin/tests/run-tests --skip "/startup script/"
+            bazel coverage //tests/... --config ci \
+              --build_tag_filters "coverage-compatible" \
+              --test_tag_filters "coverage-compatible" \
+              --test_output=all
+      - run:
+          name: Run start script
+          command: |
             # Run the start script test.
             # Doesn't use the test suite binary, because that depends on nixpkgs dependencies.
             ./tests/run-start-script.sh
-            # TODO: enable all tests for bindists
-            # (this will require tests to both work with nixpkgs and hazel backends)
+
 
   # ATTN: when you change anything here, don’t forget to copy it to the build-darwin section
   build-linux-nixpkgs:
