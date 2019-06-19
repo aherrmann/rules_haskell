@@ -58,6 +58,7 @@ def _run_ghc(hs, cc, inputs, outputs, mnemonic, arguments, params_file = None, e
 
     extra_inputs = [
         hs.tools.ghc,
+        hs.toolchain.worker,
         # Depend on the version file of the Haskell toolchain,
         # to ensure the version comparison check is run first.
         hs.toolchain.version_file,
@@ -102,6 +103,7 @@ while IFS= read -r line; do param_file_args+=("$line"); done < %s
         progress_message = progress_message,
         env = env,
         arguments = [],
+        execution_requirements = { "supports-workers": "1" },
     )
 
     return args
@@ -177,6 +179,7 @@ fi
         platform_common.ToolchainInfo(
             name = ctx.label.name,
             tools = struct(**tools_struct_args),
+            worker = ctx.attr.worker,
             compiler_flags = ctx.attr.compiler_flags,
             repl_ghci_args = ctx.attr.repl_ghci_args,
             haddock_flags = ctx.attr.haddock_flags,
@@ -211,6 +214,12 @@ _haskell_toolchain = rule(
         "tools": attr.label_list(
             doc = "GHC and executables that come with it. First item take precedance.",
             mandatory = True,
+        ),
+        "worker":  attr.label(
+            doc = "A GHC wrapper which turns the compiler into a persistent worker.",
+            mandatory = True,
+            executable = True,
+            cfg = "host",
         ),
         "libraries": attr.label_list(
             doc = "The set of libraries that come with GHC.",

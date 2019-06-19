@@ -50,3 +50,9 @@ cc_toolchain(
 )
 
 cc_toolchain_config(name = "ghc_windows_mingw64_config")
+
+sh_binary(
+    name = "ghc-worker",
+    srcs = ["ghc-worker.sh"],
+)
+

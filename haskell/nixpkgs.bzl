@@ -41,6 +41,14 @@ def _ghc_nixpkgs_haskell_toolchain_impl(repository_ctx):
             repository_ctx.symlink(path, name)
 
     repository_ctx.file(
+        "ghc-worker.sh",
+        executable = True,
+        content = """
+#!/bin/bash
+echo "Hello Worker!"
+    """)
+
+    repository_ctx.file(
         "BUILD",
         executable = False,
         content = """
@@ -59,9 +67,15 @@ filegroup(
 
 {toolchain_libraries}
 
+sh_binary(
+    name = "worker",
+    srcs = ["ghc-worker.sh"],
+)
+
 haskell_toolchain(
     name = "toolchain-impl",
     tools = {tools},
+    worker = "@io_tweag_rules_haskell_ghc_nixpkgs_haskell_toolchain//:worker",
     libraries = toolchain_libraries,
     version = "{version}",
     compiler_flags = {compiler_flags} + {compiler_flags_select},
