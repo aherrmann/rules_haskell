@@ -44,6 +44,7 @@ def haskell_context(ctx, attr = None):
 
     return HaskellContext(
         # Fields
+        ctx = ctx,
         name = attr.name,
         label = ctx.label,
         toolchain = toolchain,

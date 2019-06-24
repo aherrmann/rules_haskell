@@ -56,7 +56,7 @@ def _run_ghc(hs, cc, inputs, outputs, mnemonic, arguments, params_file = None, e
     hs.actions.write(compile_flags_file, args)
     hs.actions.write(extra_args_file, arguments)
 
-    (worker_inputs, worker_input_manifests) = hs.toolchain.ctx.resolve_tools(tools = [hs.toolchain.worker])
+    (worker_inputs, worker_input_manifests) = hs.ctx.resolve_tools(tools = [hs.toolchain.worker])
     
     extra_inputs = [
         hs.tools.ghc,
@@ -65,7 +65,7 @@ def _run_ghc(hs, cc, inputs, outputs, mnemonic, arguments, params_file = None, e
         hs.toolchain.version_file,
         compile_flags_file,
         extra_args_file,
-    ] + cc.files + worker_inputs
+    ] + cc.files
 
     if params_file:
         params_file_src = params_file.path
@@ -91,13 +91,13 @@ while IFS= read -r line; do param_file_args+=("$line"); done < %s
     extra_inputs.append(ghc_wrapper)
 
     if type(inputs) == type(depset()):
-        inputs = depset(extra_inputs, transitive = [inputs])
+        inputs = depset(extra_inputs, transitive = [inputs, worker_inputs])
     else:
-        inputs += extra_inputs
+        inputs = depset(inputs + extra_inputs, transitive = [worker_inputs])
 
     hs.actions.run_shell(
         inputs = inputs,
-        input_manifests = input_manifests + worker_input_manifests,
+        input_manifests = input_manifests,
         outputs = outputs,
         command = ghc_wrapper.path,
         mnemonic = mnemonic,
@@ -180,7 +180,6 @@ fi
         platform_common.ToolchainInfo(
             name = ctx.label.name,
             tools = struct(**tools_struct_args),
-            ctx = ctx,
             worker = ctx.attr.worker,
             compiler_flags = ctx.attr.compiler_flags,
             repl_ghci_args = ctx.attr.repl_ghci_args,
