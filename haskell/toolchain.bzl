@@ -90,20 +90,25 @@ while IFS= read -r line; do param_file_args+=("$line"); done < %s
     hs.actions.write(ghc_wrapper, script, is_executable = True)
     extra_inputs.append(ghc_wrapper)
 
+    # Pass parameters to the worker via a "flagfile"
+    flagfile = hs.actions.declare_file("flagfile.txt")
+    hs.actions.write(flagfile, content = "test")
+    extra_inputs.append(flagfile)
+
     if type(inputs) == type(depset()):
         inputs = depset(extra_inputs, transitive = [inputs, worker_inputs])
     else:
         inputs = depset(inputs + extra_inputs, transitive = [worker_inputs])
 
-    hs.actions.run_shell(
+    hs.actions.run(
         inputs = inputs,
         input_manifests = input_manifests,
         outputs = outputs,
-        command = ghc_wrapper.path,
+        executable = hs.worker,
         mnemonic = mnemonic,
         progress_message = progress_message,
         env = env,
-        arguments = [],
+        arguments = ["@" + flagfile.path],
         execution_requirements = { "supports-workers": "1" },
     )
 
