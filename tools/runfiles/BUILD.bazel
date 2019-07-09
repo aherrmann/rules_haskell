@@ -9,6 +9,7 @@ haskell_toolchain_library(name = "base")
 haskell_toolchain_library(name = "directory")
 haskell_toolchain_library(name = "filepath")
 haskell_toolchain_library(name = "process")
+haskell_toolchain_library(name = "transformers")
 
 haskell_library(
     name = "runfiles",
@@ -19,6 +20,7 @@ haskell_library(
         ":base",
         ":directory",
         ":filepath",
+        ":transformers",
     ],
 )
 
