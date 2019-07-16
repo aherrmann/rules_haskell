@@ -45,7 +45,7 @@ haskell_test(
     name = "test",
     srcs = ["test/Test.hs"],
     data = [
-        "test-data.txt",
+        "test-Data.txt",
         ":bin",
     ],
     src_strip_prefix = "test",

@@ -19,7 +19,7 @@ import Data.Foldable (asum)
 import Data.List (find, isPrefixOf, isSuffixOf)
 import Data.Maybe (fromMaybe)
 import System.Directory (doesDirectoryExist, doesFileExist, listDirectory)
-import System.Environment (getExecutablePath, lookupEnv)
+import System.Environment (getExecutablePath, lookupEnv, setEnv)
 import qualified System.FilePath
 import System.FilePath (FilePath, (</>), (<.>), addTrailingPathSeparator)
 import System.Info (os)
@@ -102,6 +102,7 @@ manifestOnlyEnv = "RUNFILES_MANIFEST_ONLY"
 create :: IO Runfiles
 create = do
     exePath <- getExecutablePath
+    setEnv manifestOnlyEnv "1"
 
     mbRunfiles <- runMaybeT $ asum
       [ do
@@ -189,4 +190,4 @@ parseManifest = map parseLine . lines
   where
     parseLine l =
         let (key, value) = span (/= ' ') l in
-        (key, dropWhile (== ' ') value)
+        (normalize key, dropWhile (== ' ') value)
