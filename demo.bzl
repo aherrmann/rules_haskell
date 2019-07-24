@@ -4,6 +4,7 @@ def _demo_rule_impl(ctx):
         curr = ctx.actions.declare_file(ctx.label.name + "-" + str(i))
         tools, manifest = ctx.resolve_tools(tools = [ctx.attr._demo])
         ctx.actions.run_shell(
+            mnemonic = "DEMO",
             command = """
             for j in `seq 1 10`; do
                 $1 $2 $3$j
