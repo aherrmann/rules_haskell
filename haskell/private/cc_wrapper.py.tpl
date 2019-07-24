@@ -47,7 +47,10 @@ CC = "{:cc:}"
 INSTALL_NAME_TOOL = "/usr/bin/install_name_tool"
 OTOOL = "/usr/bin/otool"
 
-dbg = open("c:/users/admin/cc_wrapper.log", "a")
+if platform.system() == "Windows":
+    dbg = open("c:/users/admin/cc_wrapper.log", "a")
+else:
+    dbg = open("/tmp/cc_wrapper.log", "a")
 
 def print_dbg(*args):
     print(datetime.datetime.now(), *args, file=dbg)
