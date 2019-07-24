@@ -1,7 +1,9 @@
 def _demo_rule_impl(ctx):
+    outputs = []
     prev = None
     for i in range(1, 10):
         curr = ctx.actions.declare_file(ctx.label.name + "-" + str(i))
+        outputs.append(curr)
         tools, manifest = ctx.resolve_tools(tools = [ctx.attr._demo])
         ctx.actions.run_shell(
             mnemonic = "DEMO",
@@ -10,7 +12,7 @@ def _demo_rule_impl(ctx):
                 $1 $2 $3$j
             done
             """,
-            inputs = [prev] if prev else [],
+            inputs = [],
             input_manifests = manifest,
             outputs = [curr],
             tools = tools,
@@ -18,7 +20,7 @@ def _demo_rule_impl(ctx):
         )
         prev = curr
     return [DefaultInfo(
-        files = depset(direct = [prev]),
+        files = depset(direct = outputs),
     )]
 
 demo_rule = rule(
