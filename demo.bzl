@@ -9,7 +9,7 @@ def _demo_rule_impl(ctx):
             mnemonic = "DEMO",
             command = """
             for j in `seq 1 10`; do
-                $1 $2 $3$j
+                $1 $2 $3 $j
             done
             """,
             inputs = [],

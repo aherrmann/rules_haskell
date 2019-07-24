@@ -1,17 +1,24 @@
 #!/usr/bin/env python
 
-from bazel_tools.tools.python.runfiles import runfiles as bazel_runfiles
-from contextlib import contextmanager
-import glob
-import itertools
-import os
-import platform
-import shlex
-import subprocess
+import importlib
 import sys
-import tempfile
 
-import datetime
+module_list = [
+    "abc",
+    "os",
+    "platform",
+    "glob",
+    "contextlib",
+    "bazel_tools.tools.python.runfiles",
+    "itertools",
+    "subprocess",
+    "datetime",
+    "shlex",
+    "datetime",
+]
+
+for i in range(0, int(sys.argv[2])):
+    importlib.import_module(module_list[i])
 
 outfile = open(sys.argv[1], "w")
-outfile.write(sys.argv[2])
+outfile.write(sys.argv[3])
