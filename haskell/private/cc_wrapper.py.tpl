@@ -45,7 +45,7 @@ CC = "{:cc:}"
 INSTALL_NAME_TOOL = "/usr/bin/install_name_tool"
 OTOOL = "/usr/bin/otool"
 
-dbg = open("/c/users/admin/cc_wrapper.log", "a")
+dbg = open("c:/users/admin/cc_wrapper.log", "a")
 
 
 def main():
