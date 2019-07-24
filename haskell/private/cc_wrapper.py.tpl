@@ -745,6 +745,7 @@ def run_cc(args, capture_output=False, exit_on_error=False, **kwargs):
         new_kwargs.update(kwargs)
         kwargs = new_kwargs
 
+    print_dbg("    FIND_CC", CC)
     if os.path.isfile(CC):
         cc = CC
     else:
@@ -760,6 +761,7 @@ def run_cc(args, capture_output=False, exit_on_error=False, **kwargs):
         if cc is None:
             sys.stderr.write("CC not found '{}'.\n".format(CC))
             sys.exit(1)
+    print_dbg("    FOUND_CC", cc)
 
     stdoutbuf = None
     stderrbuf = None
@@ -767,12 +769,14 @@ def run_cc(args, capture_output=False, exit_on_error=False, **kwargs):
     with response_file(args) as rsp:
         # subprocess.run is not supported in the bindist CI setup.
         # subprocess.Popen does not support context manager on CI setup.
+        print_dbg("    RUN_CC", rsp)
         proc = subprocess.Popen([cc, "@" + rsp], **kwargs)
 
         if capture_output:
             (stdoutbuf, stderrbuf) = proc.communicate()
 
         returncode = proc.wait()
+        print_dbg("    RETURN_CC", returncode)
 
     if exit_on_error and returncode != 0:
         if capture_output:
