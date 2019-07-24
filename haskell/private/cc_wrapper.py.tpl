@@ -45,15 +45,21 @@ CC = "{:cc:}"
 INSTALL_NAME_TOOL = "/usr/bin/install_name_tool"
 OTOOL = "/usr/bin/otool"
 
+dbg = open("C:/cc_wrapper.log", "a")
+
 
 def main():
+    print("CALL", sys.argv[1:], file=dbg)
     parsed = Args(load_response_files(sys.argv[1:]))
 
     if parsed.linking:
+        print("  LINK", parsed.output, parsed.libraries, parsed.rpaths, parsed.args, file=dbg)
         link(parsed.output, parsed.libraries, parsed.rpaths, parsed.args)
     elif parsed.printing_file_name:
+        print("  PRINT_FILE_NAME", parsed.print_file_name, parsed.args, file=dbg)
         print_file_name(parsed.print_file_name, parsed.args)
     else:
+        print("  OTHER", parsed.args, file=dbg)
         run_cc(parsed.args, exit_on_error=True)
 
 
