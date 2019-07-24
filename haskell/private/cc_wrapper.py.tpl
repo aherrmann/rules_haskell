@@ -40,6 +40,8 @@ import subprocess
 import sys
 import tempfile
 
+import datetime
+
 WORKSPACE = "{:workspace:}"
 CC = "{:cc:}"
 INSTALL_NAME_TOOL = "/usr/bin/install_name_tool"
@@ -47,19 +49,22 @@ OTOOL = "/usr/bin/otool"
 
 dbg = open("c:/users/admin/cc_wrapper.log", "a")
 
+def print_dbg(*args):
+    print(datetime.datetime.now(), *args, file=dbg)
+
 
 def main():
-    print("CALL", sys.argv[1:], file=dbg)
+    print_dbg("CALL", sys.argv[1:])
     parsed = Args(load_response_files(sys.argv[1:]))
 
     if parsed.linking:
-        print("  LINK", parsed.output, parsed.libraries, parsed.rpaths, parsed.args, file=dbg)
+        print_dbg("  LINK", parsed.output, parsed.libraries, parsed.rpaths, parsed.args)
         link(parsed.output, parsed.libraries, parsed.rpaths, parsed.args)
     elif parsed.printing_file_name:
-        print("  PRINT_FILE_NAME", parsed.print_file_name, parsed.args, file=dbg)
+        print_dbg("  PRINT_FILE_NAME", parsed.print_file_name, parsed.args)
         print_file_name(parsed.print_file_name, parsed.args)
     else:
-        print("  OTHER", parsed.args, file=dbg)
+        print_dbg("  OTHER", parsed.args)
         run_cc(parsed.args, exit_on_error=True)
 
 
