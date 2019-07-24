@@ -83,7 +83,7 @@ while IFS= read -r line; do param_file_args+=("$line"); done < %s
 
 # XXX Workaround https://gitlab.haskell.org/ghc/ghc/merge_requests/1308.
 set -o pipefail
-"${compile_flags[@]}" "${extra_args[@]}" ${param_file_args+"${param_file_args[@]}"} 2>&1 \
+"${compile_flags[@]}" -v3 "${extra_args[@]}" ${param_file_args+"${param_file_args[@]}"} -v3 2>&1 \
   | while IFS= read -r line; do [[ $line =~ ^Loaded ]] || echo "$line"; done >&2
 """ % (compile_flags_file.path, extra_args_file.path, params_file_src)
 
