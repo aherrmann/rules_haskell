@@ -23,6 +23,7 @@ buildifier(
 py_binary(
     name = "demo",
     srcs = ["demo.py"],
+    deps = ["@bazel_tools//tools/python/runfiles"],
 )
 
 demo_rule(
