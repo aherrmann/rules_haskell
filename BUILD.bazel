@@ -1,4 +1,5 @@
 load("@com_github_bazelbuild_buildtools//buildifier:def.bzl", "buildifier")
+load("//:demo.bzl", "demo_rule")
 
 # Run this to check for errors in BUILD files.
 buildifier(
@@ -17,4 +18,13 @@ buildifier(
     ],
     mode = "fix",
     verbose = True,
+)
+
+py_binary(
+    name = "demo",
+    srcs = ["demo.py"],
+)
+
+demo_rule(
+    name = "demo_rule",
 )
