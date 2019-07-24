@@ -67,6 +67,8 @@ def main():
         print_dbg("  OTHER", parsed.args)
         run_cc(parsed.args, exit_on_error=True)
 
+    print_dbg("  DONE")
+
 
 # --------------------------------------------------------------------
 # Parse arguments
@@ -776,14 +778,16 @@ def run_cc(args, capture_output=False, exit_on_error=False, **kwargs):
             (stdoutbuf, stderrbuf) = proc.communicate()
 
         returncode = proc.wait()
-        print_dbg("    RETURN_CC", returncode)
+        print_dbg("    WAIT_CC", returncode)
 
     if exit_on_error and returncode != 0:
         if capture_output:
             sys.stdout.write(stdout.decode())
             sys.stderr.write(stderr.decode())
+        print_dbg("    EXIT_CC", returncode)
         sys.exit(returncode)
 
+    print_dbg("    RETURN_CC", returncode)
     return (returncode, stdoutbuf, stderrbuf)
 
 
