@@ -2,11 +2,14 @@ def _demo_rule_impl(ctx):
     prev = None
     for i in range(1, 10):
         curr = ctx.actions.declare_file(ctx.label.name + "-" + str(i))
-        ctx.actions.run(
-            executable = ctx.executable._demo,
+        tools, manifest = ctx.resolve_tools(tools = [ctx.attr._demo])
+        ctx.actions.run_shell(
+            command = "$@",
             inputs = [prev] if prev else [],
+            input_manifests = manifest,
             outputs = [curr],
-            arguments = [curr.path, str(i)],
+            tools = tools,
+            arguments = [ctx.executable._demo.path, curr.path, str(i)],
         )
         prev = curr
     return [DefaultInfo(
