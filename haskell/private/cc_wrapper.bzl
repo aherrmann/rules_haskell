@@ -13,7 +13,7 @@ def _cc_wrapper_impl(ctx):
         feature_configuration = feature_configuration,
         action_name = ACTION_NAMES.c_compile,
     )
-    cc_wrapper = ctx.actions.declare_file(ctx.label.name + ".py")
+    cc_wrapper = ctx.actions.declare_file(ctx.label.name + ".cc")
     ctx.actions.expand_template(
         template = ctx.file.template,
         output = cc_wrapper,
@@ -36,7 +36,7 @@ _cc_wrapper = rule(
     attrs = {
         "template": attr.label(
             allow_single_file = True,
-            default = Label("@rules_haskell//haskell:private/cc_wrapper.py.tpl"),
+            default = Label("@rules_haskell//haskell:private/cc_wrapper.cc.tpl"),
         ),
         "_cc_toolchain": attr.label(
             default = Label("@bazel_tools//tools/cpp:current_cc_toolchain"),
@@ -50,13 +50,11 @@ def cc_wrapper(name, template = None, **kwargs):
         name = name + "-source",
         template = template,
     )
-    native.py_binary(
+    native.cc_binary(
         name = name,
         srcs = [name + "-source"],
-        main = name + "-source.py",
-        python_version = "PY3",
         deps = [
-            "@bazel_tools//tools/python/runfiles",
+            "@bazel_tools//tools/cpp/runfiles",
         ],
         **kwargs
     )
