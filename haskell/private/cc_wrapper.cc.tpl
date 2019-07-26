@@ -34,6 +34,7 @@
 #include <string>
 #include <vector>
 
+using std::move;
 using std::string;
 using std::vector;
 
@@ -44,6 +45,71 @@ const char *OTOOL = "/usr/bin/otool";
 
 // -------------------------------------------------------------------
 // parse arguments
+
+enum class flag_type {
+    output,  // -o
+    library,  // -l, --library
+    library_path,  // -L, --library-path
+    print_file_name,  // --print-file-name
+    stage,  // -c, -S, -E
+    rpath,  // -Xlinker -rpath, -Wl,-rpath
+    response_file,  // @rsp
+    other
+};
+
+struct compiler_flag {
+    compiler_flag(flag_type type, string flag) : type(type), flag(move(flag)) {}
+    compiler_flag(flag_type type, string flag, string argument)
+        : type(type), flag(move(flag)), argument(move(argument)) {}
+    flag_type type;
+    string flag;
+    string argument;
+};
+
+template <class InputIter>
+vector<compiler_flag>
+parse_compiler_flags(InputIter first, InputIter last) {
+    vector<compiler_flag> output;
+    auto get_argument = [&output, &first, const &last](string const &flag, string &argument_out) -> bool {
+        if (first != last) {
+            argument_out = *++first;
+            return true;
+        } else {
+            output.push_back(compiler_flag(flag_type::other, flag));
+        }
+    };
+    for (; first != last; ++first) {
+        string flag = *first;
+        string argument;
+        if (flag == "-o") {
+            if (get_argument(flag, argument)) {
+                output.push_back(compiler_flag(flag_type::output, flag, argument));
+            }
+        } else if (flag == "-l" || flag == "--library") {
+            if (get_argument(flag, argument)) {
+                output.push_back(compiler_flag(flag_type::library, flag, argument));
+            }
+        } else if (starts_with(flag, "-l")) {
+            output.push_back(compiler_flag(flag_type::library, "-l", flag.substr(2)));
+        } else if (starts_with(flag, "--library=")) {
+            output.push_back(compiler_flag(flag_type::library, "--library", flag.substr(10)));
+        } else if (flag == "-L" || flag == "--library-path") {
+            if (get_argument(flag, argument)) {
+                output.push_back(compiler_flag(flag_type::library_path, flag, argument));
+            }
+        } else if (starts_with(flag, "-L")) {
+            output.push_back(compiler_flag(flag_type::library_path, "-L", flag.substr(2)));
+        } else if (starts_with(flag, "--library-path=")) {
+            output.push_back(compiler_flag(flag_type::library, "--library-path", flag.substr(15)));
+        } else if (flag == "--print-file-name") {
+            if (get_argument(flag, argument)) {
+                output.push_back(compiler_flag(flag_type::print_file_name, flag, argument));
+            }
+        } else if (flag == "-c" || flag == "-S" || flag == "-c") {
+            output.push_back(compiler_flag(flag_type::stage, flag));
+        }
+    }
+}
 
 vector<string>
 load_response_files(vector<string> const &args) {
@@ -178,6 +244,7 @@ command_line parse_args(int argc, char **argv) {
         } else {
             output.args.push_back(arg);
         }
+        // XXX: Shorten library search path.
     }
 
     // DEBUG
