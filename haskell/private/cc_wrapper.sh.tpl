@@ -77,14 +77,14 @@ quote_arg() {
 }
 
 unquote_arg() {
-    local -n out="$1"
-    local arg="$2"
-    if [[ "$arg" =~ ^\"(.*)\"[[:space:]]*$ ]]; then
-        arg="${BASH_REMATCH[1]}"
-        arg="${arg//\\\"/\"}"
-        arg="${arg//\\\\/\\}"
+    local -n output="$1"
+    local input="$2"
+    if [[ "$input" =~ ^\"(.*)\"[[:space:]]*$ ]]; then
+        input="${BASH_REMATCH[1]}"
+        input="${input//\\\"/\"}"
+        input="${input//\\\\/\\}"
     fi
-    out="$arg"
+    output="$input"
 }
 
 add_arg() {
