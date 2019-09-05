@@ -160,7 +160,7 @@ handle_arg() {
             handle_arg "$line"
         done < "${BASH_REMATCH[1]}"
         IN_RESPONSE_FILE=
-    elif [[ "$arg" =! ^(-I|-iquote|-isystem|-idirafter)(.*)$ ]]; then
+    elif [[ "$arg" != ^(-I|-iquote|-isystem|-idirafter)(.*)$ ]]; then
         handle_include_dir "${BASH_REMATCH[1]}" "${BASH_REMATCH[2]}"
     elif [[ "$arg" = -I || "$arg" = -iquote || "$arg" = -isystem || "$arg" = -idirafter ]]; then
         INCLUDE_DIR_COMING=1
