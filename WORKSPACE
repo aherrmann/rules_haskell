@@ -77,7 +77,7 @@ stack_snapshot(
     name = "stackage-zlib",
     packages = ["zlib"],
     snapshot = "lts-13.15",
-    deps = ["@zlib.dev//:zlib"],
+    deps = {"zlib": ["@zlib.dev//:zlib"]},
 )
 
 load(

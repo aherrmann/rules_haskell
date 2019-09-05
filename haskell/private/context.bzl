@@ -37,7 +37,9 @@ def haskell_context(ctx, attr = None):
         coverage_enabled = ctx.configuration.coverage_enabled
 
     ghc_wrapper = None
-    if hasattr(ctx.executable, "_ghc_wrapper"):
+    if ctx.label.name.startswith("damlc") and hasattr(ctx.executable, "_ghc_wrapper_dbg"):
+        ghc_wrapper = ctx.executable._ghc_wrapper_dbg
+    elif hasattr(ctx.executable, "_ghc_wrapper"):
         ghc_wrapper = ctx.executable._ghc_wrapper
 
     worker = getattr(ctx.executable, "worker", None)
