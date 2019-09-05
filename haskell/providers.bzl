@@ -282,6 +282,10 @@ def get_extra_libs(hs, cc_info, dynamic = False, pic = None, fixup_dir = "_libs"
             dynamic_lib = symlink_dynamic_library(hs, dynamic_lib, fixed_lib_dir)
         static_lib = mangle_static_library(hs, dynamic_lib, static_lib, fixed_lib_dir)
 
+        if hs.toolchain.is_darwin and fixup_dir == "_ghci_libs" and dynamic_lib and (get_lib_name(dynamic_lib) == "grpc" or get_lib_name(dynamic_lib) == "gpr"):
+            dynamic_libs.append(symlink_dynamic_library(hs, dynamic_lib, fixup_dir))
+            continue
+
         if static_lib and not (dynamic and dynamic_lib):
             static_libs.append(static_lib)
         elif dynamic_lib:
