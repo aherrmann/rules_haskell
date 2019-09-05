@@ -287,7 +287,7 @@ def _create_repl(hs, ctx, repl_info, output):
     )
 
     hs.actions.expand_template(
-        template = ctx.file._ghci_repl_wrapper,
+        template = ctx.file.ghci_repl_wrapper,
         output = output,
         is_executable = True,
         substitutions = {
@@ -370,7 +370,7 @@ haskell_repl = rule(
             allow_single_file = True,
             default = Label("@rules_haskell//haskell:assets/ghci_script"),
         ),
-        "_ghci_repl_wrapper": attr.label(
+        "ghci_repl_wrapper": attr.label(
             allow_single_file = True,
             default = Label("@rules_haskell//haskell:private/ghci_repl_wrapper.sh"),
         ),
