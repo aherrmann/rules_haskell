@@ -108,7 +108,12 @@ def package(
         "library-dirs": ["${pkgroot}"] + extra_lib_dirs,
         "dynamic-library-dirs": ["${pkgroot}"] + extra_lib_dirs,
         "hs-libraries": [pkg_id.library_name(hs, my_pkg_id)] if has_hs_library else [],
-        "extra-libraries": extra_libs,
+        "extra-libraries": extra_libs + ([
+            "stdc++",
+            "crypt32",
+            "shlwapi",
+            "ws2_32",
+        ] if hs.toolchain.is_windows else []),
         "depends": hs.package_ids,
     })
 
