@@ -246,7 +246,7 @@ def _compilation_defaults(hs, cc, java, dep_info, plugin_dep_info, cc_info, srcs
 
     # Compilation mode.  Allow rule-supplied compiler flags to override it.
     if hs.mode == "opt":
-        args.add("-O2")
+        args.add("-O")
 
     args.add("-static")
     if with_profiling:
