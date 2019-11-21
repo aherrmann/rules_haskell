@@ -145,6 +145,7 @@ def tmpdir():
 
 with in_srctree():
     with tmpdir() as distdir:
+        distdir = os.path.relpath(distdir)
         enable_relocatable_flags = ["--enable-relocatable"] \
                 if "%{is_windows}" != "True" else []
 
