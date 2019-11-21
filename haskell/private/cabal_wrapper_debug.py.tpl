@@ -27,7 +27,7 @@ import subprocess
 import sys
 import tempfile
 
-debug = False
+debug = True
 
 def run(cmd, *args, **kwargs):
     if debug:

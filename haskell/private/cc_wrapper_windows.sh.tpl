@@ -26,6 +26,10 @@
 
 set -euo pipefail
 
+debug() {
+    echo "$*" >> /c/temp/cc_wrapper_debug.log
+}
+
 # ----------------------------------------------------------
 # Find compiler
 
