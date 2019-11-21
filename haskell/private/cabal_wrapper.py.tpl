@@ -114,7 +114,7 @@ def in_srctree():
     old_cwd = os.getcwd()
     if "%{is_windows}" == "True":
         try:
-            destdir = tempfile.mkdtemp(dir=pkgroot)
+            destdir = tempfile.mkdtemp()
             shutil.copytree(
                 srcdir,
                 os.path.join(destdir, "src"),
@@ -137,7 +137,7 @@ def tmpdir():
     """This is a reimplementation of `tempfile.TemporaryDirectory` because
     the latter isn't available in python2
     """
-    distdir = tempfile.mkdtemp(dir=pkgroot)
+    distdir = tempfile.mkdtemp()
     try:
         yield distdir
     finally:
