@@ -20,12 +20,10 @@ def _cabal_wrapper_impl(ctx):
     cabal_wrapper = hs.actions.declare_file(ctx.label.name)
     if ctx.label.name == "cabal_wrapper_debug.py":
         cc_wrapper = hs_toolchain.cc_wrapper_debug.executable.path
-        transitive_files = depset(
-            transitive = [cc_toolchain.all_files, hs_toolchain.cc_wrapper_debug.inputs],
-        )
+        cc_wrapper_runfiles = hs_toolchain.cc_wrapper_debug.runfiles
     else:
         cc_wrapper = hs_toolchain.cc_wrapper.executable.path
-        transitive_files = cc_toolchain.all_files
+        cc_wrapper_runfiles = hs_toolchain.cc_wrapper.runfiles
     hs.actions.expand_template(
         template = cabal_wrapper_tpl,
         output = cabal_wrapper,
@@ -35,7 +33,7 @@ def _cabal_wrapper_impl(ctx):
             "%{ghc_pkg}": hs.tools.ghc_pkg.path,
             "%{runghc}": hs.tools.runghc.path,
             "%{ar}": ar,
-            "%{cc}": hs_toolchain.cc_wrapper.executable.path,
+            "%{cc}": cc_wrapper,
             "%{strip}": cc_toolchain.strip_executable(),
             "%{is_windows}": str(hs.toolchain.is_windows),
             "%{workspace}": ctx.workspace_name,
@@ -43,7 +41,7 @@ def _cabal_wrapper_impl(ctx):
     )
     return [DefaultInfo(
         files = depset([cabal_wrapper]),
-        runfiles = hs.toolchain.cc_wrapper.runfiles.merge(ctx.runfiles(
+        runfiles = cc_wrapper_runfiles.merge(ctx.runfiles(
             transitive_files = cc_toolchain.all_files,
             collect_data = True,
         )),
