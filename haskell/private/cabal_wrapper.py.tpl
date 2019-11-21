@@ -97,37 +97,40 @@ def recache_db():
 recache_db()
 
 @contextmanager
-def copy_src():
-    destdir = tempfile.mkdtemp(dir=pkgroot)
-    try:
-        if "%{is_windows}" == "True":
-            import _winapi
-            for item in os.listdir(srcdir):
-                # Use directory junctions and file copies on Windows.
-                if os.path.isdir(os.path.join(srcdir, item)):
-                    _winapi.CreateJunction(
-                        os.path.join(srcdir, item),
-                        os.path.join(destdir, item))
-                else:
-                    shutil.copyfile(
-                        os.path.join(srcdir, item),
-                        os.path.join(destdir, item))
-        else:
-            for item in os.listdir(srcdir):
-                # Use symbolic links on Unix.
-                os.symlink(
-                    os.path.join(srcdir, item),
-                    os.path.join(destdir, item))
+def in_srctree():
+    """Change into the source directory.
 
-        yield destdir
-    finally:
-        for item in os.listdir(destdir):
-            try:
-                # Remove directory junctions instead of deleting the files
-                # behind the junction.
-                os.unlink(os.path.join(destdir, item))
-            except OSError:
-                shutil.rmtree(os.path.join(destdir, item))
+    Cabal really wants the current working directory to be directory
+    where the .cabal file is located. So we have no choice but to chance
+    cd into it, but then we have to rewrite all relative references into
+    absolute ones before doing so (using $execroot).
+
+    On Windows Bazel builds are not sandboxed and operations like executing
+    configure scripts can modify the source tree. If the `srcs` attribute uses
+    a glob like `glob(["**"])`, then these modified files will enter `srcs` on
+    the next execution and invalidate the cache. To avoid this we copy the
+    source tree on Windows.
+    """
+    old_cwd = os.getcwd()
+    if "%{is_windows}" == "True":
+        try:
+            destdir = tempfile.mkdtemp(dir=pkgroot)
+            shutil.copytree(
+                srcdir,
+                os.path.join(destdir, "src"),
+                symlinks=True,
+                ignore_dangling_symlinks=True)
+            os.chdir(os.path.join(destdir, "src"))
+            yield
+        finally:
+            os.chdir(old_cwd)
+            shutil.rmtree(destdir)
+    else:
+        try:
+            os.chdir(srcdir)
+            yield
+        finally:
+            os.chdir(old_cwd)
 
 @contextmanager
 def tmpdir():
@@ -140,17 +143,11 @@ def tmpdir():
     finally:
         shutil.rmtree(distdir)
 
-with copy_src() as srctree:
+with in_srctree():
     with tmpdir() as distdir:
         enable_relocatable_flags = ["--enable-relocatable"] \
                 if "%{is_windows}" != "True" else []
 
-        # Cabal really wants the current working directory to be directory
-        # where the .cabal file is located. So we have no choice but to chance
-        # cd into it, but then we have to rewrite all relative references into
-        # absolute ones before doing so (using $execroot).
-        old_cwd = os.getcwd()
-        os.chdir(srctree)
         os.putenv("HOME", "/var/empty")
         run([runghc, setup, "configure", \
             component, \
@@ -184,7 +181,6 @@ with copy_src() as srctree:
             )
         run([runghc, setup, "build", "--verbose=0", "--builddir=" + distdir])
         run([runghc, setup, "install", "--verbose=0", "--builddir=" + distdir])
-        os.chdir(old_cwd)
 
 # XXX Cabal has a bizarre layout that we can't control directly. It
 # confounds the library-dir and the import-dir (but not the
