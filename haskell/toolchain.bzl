@@ -156,6 +156,12 @@ def _haskell_toolchain_impl(ctx):
         cc_wrapper_info.data_runfiles,
     )
 
+    (cc_wrapper_debug_inputs, cc_wrapper_debug_manifest) = ctx.resolve_tools(tools = [ctx.attr._cc_wrapper_debug])
+    cc_wrapper_debug_info = ctx.attr._cc_wrapper_debug[DefaultInfo]
+    cc_wrapper_debug_runfiles = cc_wrapper_debug_info.default_runfiles.merge(
+        cc_wrapper_debug_info.data_runfiles,
+    )
+
     return [
         platform_common.ToolchainInfo(
             name = ctx.label.name,
@@ -170,6 +176,12 @@ def _haskell_toolchain_impl(ctx):
                 inputs = cc_wrapper_inputs,
                 manifests = cc_wrapper_manifest,
                 runfiles = cc_wrapper_runfiles,
+            ),
+            cc_wrapper_debug = struct(
+                executable = ctx.executable._cc_wrapper_debug,
+                inputs = cc_wrapper_debug_inputs,
+                manifests = cc_wrapper_debug_manifest,
+                runfiles = cc_wrapper_debug_runfiles,
             ),
             mode = ctx.var["COMPILATION_MODE"],
             actions = struct(
@@ -238,6 +250,11 @@ Label pointing to the locale archive file to use. Mostly useful on NixOS.
         "_cc_wrapper": attr.label(
             cfg = "host",
             default = Label("@rules_haskell//haskell:cc_wrapper"),
+            executable = True,
+        ),
+        "_cc_wrapper_debug": attr.label(
+            cfg = "host",
+            default = Label("@rules_haskell//haskell:cc_wrapper_debug"),
             executable = True,
         ),
     },

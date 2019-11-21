@@ -36,6 +36,11 @@ cc_wrapper(
     visibility = ["//visibility:public"],
 )
 
+cc_wrapper(
+    name = "cc_wrapper_debug",
+    visibility = ["//visibility:public"],
+)
+
 cabal_wrapper(
     name = "cabal_wrapper",
     visibility = ["//visibility:public"],

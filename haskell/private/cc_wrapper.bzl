@@ -50,7 +50,7 @@ _cc_wrapper = rule(
 def cc_wrapper(name, **kwargs):
     _cc_wrapper(
         name = name + ".py",
-        template = "@rules_haskell//haskell:private/cc_wrapper.py.tpl",
+        template = "@rules_haskell//haskell:private/%s.py.tpl" % name,
         platform = select({
             "@rules_haskell//haskell/platforms:darwin": "darwin",
             "@rules_haskell//haskell/platforms:mingw32": "windows",
@@ -59,7 +59,7 @@ def cc_wrapper(name, **kwargs):
     )
     _cc_wrapper(
         name = name + ".sh",
-        template = "@rules_haskell//haskell:private/cc_wrapper_windows.sh.tpl",
+        template = "@rules_haskell//haskell:private/%s_windows.sh.tpl" % name,
         platform = select({
             "@rules_haskell//haskell/platforms:darwin": "darwin",
             "@rules_haskell//haskell/platforms:mingw32": "windows",
