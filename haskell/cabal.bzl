@@ -426,7 +426,10 @@ def _haskell_cabal_binary_impl(ctx):
         srcs = ctx.files.srcs,
         compiler_flags = user_compile_flags,
         flags = ctx.attr.flags,
-        cabal_wrapper = ctx.executable._cabal_wrapper,
+        cabal_wrapper =
+            ctx.executable._cabal_wrapper_debug
+            if ctx.label.workspace_name == "proto3_suite"
+            else ctx.executable._cabal_wrapper,
         package_database = package_database,
     )
     ctx.actions.run(
@@ -489,6 +492,11 @@ haskell_cabal_binary = rule(
             executable = True,
             cfg = "host",
             default = Label("@rules_haskell//haskell:cabal_wrapper"),
+        ),
+        "_cabal_wrapper_debug": attr.label(
+            executable = True,
+            cfg = "host",
+            default = Label("@rules_haskell//haskell:cabal_wrapper_debug"),
         ),
         "_cc_toolchain": attr.label(
             default = Label("@bazel_tools//tools/cpp:current_cc_toolchain"),
