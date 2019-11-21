@@ -18,7 +18,7 @@ def _cabal_wrapper_impl(ctx):
 
     cabal_wrapper_tpl = ctx.file.cabal_wrapper_tpl
     cabal_wrapper = hs.actions.declare_file(ctx.label.name)
-    if ctx.label.name == "cabal_wrapper_debug":
+    if ctx.label.name == "cabal_wrapper_debug.py":
         cc_wrapper = hs_toolchain.cc_wrapper_debug.executable.path
         transitive_files = depset(
             transitive = [cc_toolchain.all_files, hs_toolchain.cc_wrapper_debug.inputs],
