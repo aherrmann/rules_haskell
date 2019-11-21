@@ -101,7 +101,7 @@ def tmpdir():
     """This is a reimplementation of `tempfile.TemporaryDirectory` because
     the latter isn't available in python2
     """
-    distdir = tempfile.mkdtemp()
+    distdir = tempfile.mkdtemp(dir=pkgroot)
     try:
         yield distdir
     finally:
