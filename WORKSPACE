@@ -72,6 +72,29 @@ haskell_cabal_binary(
     urls = ["http://hackage.haskell.org/package/proto-lens-protoc-0.5.0.0/proto-lens-protoc-0.5.0.0.tar.gz"],
 )
 
+http_archive(
+    name = "proto3_suite",
+    build_file_content = """
+load("@rules_haskell//haskell:cabal.bzl", "haskell_cabal_binary")
+haskell_cabal_binary(
+name = "compile-proto-file",
+srcs = glob(["**"]),
+deps = [
+    "@stackage//:base",
+    "@stackage//:optparse-applicative",
+    "@stackage//:proto3-suite",
+    "@stackage//:system-filepath",
+    "@stackage//:text",
+    "@stackage//:turtle",
+],
+visibility = ["//visibility:public"],
+)
+""",
+    sha256 = "216fb8b5d92afc9df70512da2331e098e926239efd55e770802079c2a13bad5e",
+    strip_prefix = "proto3-suite-0.4.0.0",
+    urls = ["http://hackage.haskell.org/package/proto3-suite-0.4.0.0/proto3-suite-0.4.0.0.tar.gz"],
+)
+
 load("@rules_haskell//haskell:cabal.bzl", "stack_snapshot")
 
 stack_snapshot(
@@ -102,6 +125,13 @@ stack_snapshot(
         "proto-lens",
         "proto-lens-protoc",
         "lens-family",
+        # proto3-suite
+        "optparse-applicative",
+        "proto3-suite-0.4.0.0",
+        "proto3-wire-1.1.0",
+        "system-filepath",
+        "text",
+        "turtle",
     ],
     snapshot = "lts-14.4",
     tools = [
