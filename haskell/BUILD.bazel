@@ -16,6 +16,7 @@ exports_files(
         "assets/ghci_script",
         "private/cabal_wrapper.sh.tpl",
         "private/cabal_wrapper.py.tpl",
+        "private/cabal_wrapper_debug.py.tpl",
         "private/coverage_wrapper.sh.tpl",
         "private/ghci_repl_wrapper.sh",
         "private/haddock_wrapper.sh.tpl",
@@ -43,6 +44,12 @@ cc_wrapper(
 
 cabal_wrapper(
     name = "cabal_wrapper",
+    visibility = ["//visibility:public"],
+)
+
+cabal_wrapper(
+    name = "cabal_wrapper_debug",
+    cabal_wrapper_tpl = "@rules_haskell//haskell:private/cabal_wrapper_debug.py.tpl",
     visibility = ["//visibility:public"],
 )
 

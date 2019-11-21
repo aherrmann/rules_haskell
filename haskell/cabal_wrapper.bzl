@@ -16,8 +16,16 @@ def _cabal_wrapper_impl(ctx):
     if ar.find("libtool") >= 0:
         ar = "/usr/bin/ar"
 
-    cabal_wrapper_tpl = ctx.file._cabal_wrapper_tpl
-    cabal_wrapper = hs.actions.declare_file("cabal_wrapper.py")
+    cabal_wrapper_tpl = ctx.file.cabal_wrapper_tpl
+    cabal_wrapper = hs.actions.declare_file(ctx.label.name)
+    if ctx.label.name == "cabal_wrapper_debug":
+        cc_wrapper = hs_toolchain.cc_wrapper_debug.executable.path
+        transitive_files = depset(
+            transitive = [cc_toolchain.all_files, hs_toolchain.cc_wrapper_debug.inputs],
+        )
+    else:
+        cc_wrapper = hs_toolchain.cc_wrapper.executable.path
+        transitive_files = cc_toolchain.all_files
     hs.actions.expand_template(
         template = cabal_wrapper_tpl,
         output = cabal_wrapper,
@@ -44,7 +52,7 @@ def _cabal_wrapper_impl(ctx):
 _cabal_wrapper = rule(
     implementation = _cabal_wrapper_impl,
     attrs = {
-        "_cabal_wrapper_tpl": attr.label(
+        "cabal_wrapper_tpl": attr.label(
             allow_single_file = True,
             default = Label("@rules_haskell//haskell:private/cabal_wrapper.py.tpl"),
         ),
@@ -56,9 +64,10 @@ _cabal_wrapper = rule(
     fragments = ["cpp"],
 )
 
-def cabal_wrapper(name, **kwargs):
+def cabal_wrapper(name, cabal_wrapper_tpl = None, **kwargs):
     _cabal_wrapper(
         name = name + ".py",
+        cabal_wrapper_tpl = cabal_wrapper_tpl,
     )
     native.py_binary(
         name = name,
