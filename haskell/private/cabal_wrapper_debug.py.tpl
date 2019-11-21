@@ -145,6 +145,26 @@ with tmpdir() as distdir:
         "--package-db=global", \
         ] + \
         extra_args + \
+        [
+            # GHC uses C compiler for assemly, linking and preprocessing as well.
+            "--ghc-option=" + "-pgma",
+            "--ghc-option=" + cc,
+            "--ghc-option=" + "-pgmc",
+            "--ghc-option=" + cc,
+            "--ghc-option=" + "-pgml",
+            "--ghc-option=" + cc,
+            "--ghc-option=" + "-pgmP",
+            "--ghc-option=" + cc,
+            # Setting -pgm* flags explicitly has the unfortunate side effect
+            # of resetting any program flags in the GHC settings file. So we
+            # restore them here. See
+            # https://ghc.haskell.org/trac/ghc/ticket/7929.
+            "--ghc-option=" + "-optc-fno-stack-protector",
+            "--ghc-option=" + "-optP-E",
+            "--ghc-option=" + "-optP-undef",
+            "--ghc-option=" + "-optP-traditional",
+            "--ghc-option=" + "-v",
+        ] + \
         [ arg.replace("=", "=" + execroot + "/") for arg in path_args ] + \
         [ "--package-db=" + package_database ], # This arg must come last.
         )
