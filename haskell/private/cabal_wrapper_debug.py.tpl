@@ -114,7 +114,7 @@ def in_srctree():
     old_cwd = os.getcwd()
     if "%{is_windows}" == "True":
         try:
-            destdir = tempfile.mkdtemp(dir=pkgroot)
+            destdir = tempfile.mkdtemp()
             shutil.copytree(
                 srcdir,
                 os.path.join(destdir, "src"),
