@@ -28,16 +28,7 @@ http_archive(
 load("@rules_haskell//haskell:cabal.bzl", "haskell_cabal_binary")
 haskell_cabal_binary(
     name = "alex",
-    srcs = glob([
-        "CHANGELOG.md",
-        "LICENSE",
-        "README.md",
-        "data/**",
-        "**/*.cabal",
-        "**/*.hs",
-        "**/*.x",
-        "**/*.y",
-    ]),
+    srcs = glob(["**"]),
     visibility = ["//visibility:public"],
 )
     """,
