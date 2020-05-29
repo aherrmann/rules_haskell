@@ -879,7 +879,7 @@ def darwin_rewrite_load_commands(rewrites, output):
         args.extend(["-change", old, os.path.join("@rpath", new)])
     if args:
         subprocess.check_call([INSTALL_NAME_TOOL] + args + [output])
-        subprocess.call([OTOOL, "-l", output])
+        subprocess.call([OTOOL, "-l", output], stdout=debug_file, stderr=debug_file)
 
 
 # --------------------------------------------------------------------
