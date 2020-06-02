@@ -73,6 +73,9 @@ def debug(*args, **kwargs):
 def main():
     parsed = Args(load_response_files(sys.argv[1:]))
     debug("============================================================")
+    debug("SELF " + __file__)
+    debug("PWD " + os.getcwd())
+    debug("ENV\n  " + "\n  ".join(f"{k}: {v}" for (k, v) in os.environ.items()))
     debug("ARGS\n  " + "\n  ".join(parsed.args))
     debug("RUNPATH\n  " + "\n  ".join(parsed.rpaths))
 
@@ -728,8 +731,9 @@ def find_solib_rpath(rpaths, output):
         # GHC generates temporary libraries outside the execroot. In that case
         # the Bazel generated RPATHs are not forwarded, and the solib directory
         # is not visible on the command-line.
-        for (root, dirnames, _) in breadth_first_walk("."):
+        for (root, dirnames, _) in breadth_first_walk(os.environ.get("RULES_HASKELL_EXECROOT", ".")):
             if "_solib_{:cpu:}" in dirnames:
+                debug("TMP SOLIB_DIR", os.path.join(root, "_solib_{:cpu:}"))
                 return os.path.join(root, "_solib_{:cpu:}")
 
     return None
