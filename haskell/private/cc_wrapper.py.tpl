@@ -696,7 +696,7 @@ def find_solib_rpath(rpaths, output):
 
     """
     execroot = os.environ.get("RULES_HASKELL_EXEC_ROOT", ".")
-    solib_dir = paths.join(execroot, "{:solib_dir:}")
+    solib_dir = os.path.join(execroot, "{:solib_dir:}")
     if os.path.isdir(solib_dir):
         debug("SOLIB_DIR", solib_dir)
         return solib_dir
