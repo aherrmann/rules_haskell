@@ -1,4 +1,3 @@
-load("@bazel_skylib//lib:paths.bzl", "paths")
 load("@bazel_tools//tools/cpp:toolchain_utils.bzl", "find_cpp_toolchain")
 load("@bazel_tools//tools/build_defs/cc:action_names.bzl", "ACTION_NAMES")
 load("@rules_python//python:defs.bzl", "py_binary")
@@ -22,7 +21,7 @@ def _cc_wrapper_impl(ctx):
         is_executable = True,
         substitutions = {
             "{:cc:}": cc,
-            "{:solib_dir:}": paths.join(ctx.bin_dir.path, "_solib_" + cc_toolchain.cpu),
+            "{:cpu:}": cc_toolchain.cpu,
             "{:workspace:}": ctx.workspace_name,
             "{:platform:}": ctx.attr.platform,
         },
