@@ -724,7 +724,7 @@ def find_solib_rpath(rpaths, output):
         solib_rpath = ""
         for comp in components:
             solib_rpath = os.path.join(solib_rpath, comp)
-            if comp.startswith("_solib_") and os.path.isdir(resolve_rpath(solib_rpath, output)):
+            if comp.startswith("_solib_") and os.path.isdir(resolve_rpath(solib_rpath, output)[1]):
                 debug("SOLIB_DIR", solib_rpath)
                 return solib_rpath
 
