@@ -1284,7 +1284,7 @@ def _pin_packages(repository_ctx, resolved):
 
             spec["pinned"] = {
                 "sha256": sha256,
-                "strip-prefix": paths.dirname(found_cabal_files),
+                "strip-prefix": paths.dirname(found_cabal_files[0]),
             }
         elif spec["location"]["type"] in ["git", "hg"]:
             # Bazel cannot cache git (or hg) repositories in the repository
