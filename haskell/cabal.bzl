@@ -1260,7 +1260,7 @@ def _pin_packages(repository_ctx, resolved):
             # stack also doesn't expose any subdirectories that need to be
             # stripped. Here we assume the project root to be the directory
             # that contains the cabal file.
-            root = "{name}-{version}".format(**spec)
+            root = str(repository_ctx.path("{name}-{version}".format(**spec)))
             cabal_file = "{name}.cabal".format(**spec)
             find_cmd = ["find", root, "-name", cabal_file]
             if get_cpu_value(repository_ctx) == "x64_windows":
