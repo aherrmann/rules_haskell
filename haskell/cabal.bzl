@@ -1264,7 +1264,7 @@ def _pin_packages(repository_ctx, resolved):
             cabal_file = "{name}.cabal".format(**spec)
             find_cmd = ["find", root, "-name", cabal_file]
             if get_cpu_value(repository_ctx) == "x64_windows":
-                find_cmd = ["cmd", "/c", "dir", root + "\\" + cabal_file, "/s/b"]
+                find_cmd = ["cmd", "/c", "dir", paths.join(root, cabal_file).replace("/", "\\"), "/s/b"]
             subdirs = [
                 paths.relativize(line.strip(), root)
                 for line in _execute_or_fail_loudly(repository_ctx, find_cmd).stdout.splitlines()
